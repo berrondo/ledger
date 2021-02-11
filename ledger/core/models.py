@@ -4,7 +4,7 @@ from polymorphic.models import PolymorphicModel
 
 
 class Transacao(PolymorphicModel):
-    valor = models.DecimalField()
+    valor = models.DecimalField(decimal_places=2, max_digits=10)
     created_at = models.DateTimeField(auto_now=True)
 
 

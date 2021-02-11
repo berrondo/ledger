@@ -15,3 +15,15 @@ http://mikehillyer.com/articles/managing-hierarchical-data-in-mysql/
 the MVP:
 
 https://medium.com/@hnordt/como-pagar-6-de-impostos-dentro-da-lei-a91c23868ec6
+
+
+    Venda(
+        Imposto(),
+    )
+    
+    class Transacao
+    class Venda(Transacao)
+    class Imposto(Transacao)
+    
+    Venda
+      +- Imposto

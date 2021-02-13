@@ -15,9 +15,35 @@ class Transaction(PolymorphicModel):
     # uuid =
 
 
-class Venda(Transaction):
+class _Venda(Transaction):
     ...
 
 
 class Imposto(Transaction):
     ...
+
+
+class Contrato:
+    def __init__(self, *transacoes):
+        ...
+
+
+class Venda(Contrato):
+    def __init__(self, *transacoes):
+        super().__init__(self, [_Venda] + transacoes)
+
+    def __call__(self, amount):
+        ...
+
+
+class Percentual:
+    def __init__(self, percentual):
+        ...
+
+
+Venda = Venda(
+    Imposto(Percentual(10))
+)
+
+
+venda = Venda(100)

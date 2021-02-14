@@ -2,7 +2,7 @@ from decimal import Decimal
 
 import pytest
 
-from ledger.core.models import Contract, Transaction, Account
+from ledger.core.models import Journal, Transaction, Account
 
 
 @pytest.fixture
@@ -15,15 +15,10 @@ def conta2():
     return Account.objects.create()
 
 
-@pytest.fixture
-def conta3():
-    return Account.objects.create()
-
-
 def test_venda(conta1, conta2):
     # defining Venda contract:
-    Venda = Contract(
-        base=Transaction(
+    Venda = Journal(
+        Transaction(
             debit_from=conta1,
             credit_to=conta2
         )
@@ -40,15 +35,13 @@ def test_venda(conta1, conta2):
 
 def test_venda_com_desconto(conta1, conta2):
     # defining Venda contract:
-    VendaCom10DinheirosDeDesconto = Contract(
-        base=Transaction(
+    VendaCom10DinheirosDeDesconto = Journal(
+        Transaction(
             debit_from=conta1,
             credit_to=conta2
         ),
-        sub_transactions=dict(
-            Desconto=Transaction(
-                amount=-10,
-            )
+        Transaction(
+            amount=-10,
         )
     )
 
@@ -58,7 +51,7 @@ def test_venda_com_desconto(conta1, conta2):
 
     all_transactions = Transaction.objects.all()
     assert all_transactions.count() == 2
-    assert all_transactions.first().amount == Decimal(100)
+    assert all_transactions[0].amount == Decimal(100)
     assert all_transactions[1].amount == Decimal(-10)
 
     assert conta2.balance() == Decimal(90)

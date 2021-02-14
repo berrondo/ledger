@@ -20,12 +20,11 @@ class Transaction(PolymorphicModel):
     # uuid =
 
 
-class Contract:
-    def __init__(self, base: Transaction, sub_transactions=None):
-        if sub_transactions is None:
-            sub_transactions = {}
-        self.base = base
-        self.sub_transactions = sub_transactions
+class Journal:
+    def __init__(self, *transactions):
+        self.transactions = transactions
+        self.base = list(self.transactions).pop(0)
+        self.sub_transactions = transactions
 
     def __call__(self, amount):
         self._process_sub_transactions()
@@ -33,12 +32,12 @@ class Contract:
         return self
 
     def _process_sub_transactions(self):
-        for name, transaction in self.sub_transactions.items():
+        for transaction in self.sub_transactions:
             transaction.debit_from = self.base.debit_from
             transaction.credit_to = self.base.credit_to
 
     def save(self):
         created_at = datetime.now()
-        for transaction in [self.base] + list(self.sub_transactions.values()):
+        for transaction in self.transactions:
             transaction.created_at = created_at
             transaction.save()

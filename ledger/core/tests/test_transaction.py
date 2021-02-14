@@ -78,8 +78,9 @@ def test_venda_com_imposto(conta1, conta2, conta3):
         ),
         Transaction(
             name='ImpostoPercentual',
-            amount=Percentual(-10),
-            # credit_to=conta3
+            amount=Percentual(10),
+            debit_from=conta2,
+            credit_to=conta3
         )
     )
 
@@ -90,11 +91,11 @@ def test_venda_com_imposto(conta1, conta2, conta3):
     all_transactions = _Transaction.objects.all()
     assert all_transactions.count() == 2
     assert all_transactions[0].amount == Decimal(100)
-    assert all_transactions[1].amount == Decimal(-10)
+    assert all_transactions[1].amount == Decimal(10)
 
-    # assert all_transactions[1].credit_to == conta3
+    assert all_transactions[1].credit_to == conta3
 
-    # assert conta3.balance() == Decimal(10)
+    assert conta3.balance() == Decimal(10)
     assert conta2.balance() == Decimal(90)
 
 

@@ -1,13 +1,26 @@
 from decimal import Decimal
 
+import pytest
+
 from ledger.core.models import Contract, Transaction, Account
 
 
-def test_venda():
-    # accounts:
-    conta1 = Account.objects.create()
-    conta2 = Account.objects.create()
+@pytest.fixture
+def conta1():
+    return Account.objects.create()
 
+
+@pytest.fixture
+def conta2():
+    return Account.objects.create()
+
+
+@pytest.fixture
+def conta3():
+    return Account.objects.create()
+
+
+def test_venda(conta1, conta2):
     # defining Venda contract:
     Venda = Contract(
         base=Transaction(
@@ -20,15 +33,12 @@ def test_venda():
     v = Venda(100)
     v.save()
 
-    assert Transaction.objects.all().count() == 1
-    assert Transaction.objects.all().first().amount == Decimal(100)
+    all_transactions = Transaction.objects.all()
+    assert all_transactions.count() == 1
+    assert all_transactions.first().amount == Decimal(100)
 
 
-def test_venda_com_desconto():
-    # accounts:
-    conta1 = Account.objects.create()
-    conta2 = Account.objects.create()
-
+def test_venda_com_desconto(conta1, conta2):
     # defining Venda contract:
     VendaCom10DinheirosDeDesconto = Contract(
         base=Transaction(
@@ -37,7 +47,7 @@ def test_venda_com_desconto():
         ),
         sub_transactions=dict(
             Desconto=Transaction(
-                amount=10,
+                amount=-10,
             )
         )
     )
@@ -46,8 +56,12 @@ def test_venda_com_desconto():
     v = VendaCom10DinheirosDeDesconto(100)
     v.save()
 
-    assert Transaction.objects.all().count() == 2
-    assert Transaction.objects.all().first().amount == Decimal(100)
+    all_transactions = Transaction.objects.all()
+    assert all_transactions.count() == 2
+    assert all_transactions.first().amount == Decimal(100)
+    assert all_transactions[1].amount == Decimal(-10)
+
+    assert conta2.balance() == Decimal(90)
 
 
 # some proposals for contract definition:

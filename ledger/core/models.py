@@ -1,11 +1,15 @@
+from decimal import Decimal
+
 from django.db import models
+from django.db.models import Sum
 from django.utils.datetime_safe import datetime
 
 from polymorphic.models import PolymorphicModel
 
 
 class Account(models.Model):
-    ...
+    def balance(self):
+        return Transaction.objects.filter(credit_to=self).aggregate(Sum('amount'))['amount__sum']
 
 
 class Transaction(PolymorphicModel):

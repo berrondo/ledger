@@ -24,18 +24,17 @@ class Contract:
         self.sub_transactions = sub_transactions
 
     def __call__(self, amount):
-        self.created_at = datetime.now()
         self._process_sub_transactions()
         self.base.amount = amount
-        self.base.created_at = self.created_at
         return self
 
     def _process_sub_transactions(self):
         for name, transaction in self.sub_transactions.items():
             transaction.debit_from = self.base.debit_from
             transaction.credit_to = self.base.credit_to
-            transaction.created_at = self.created_at
 
     def save(self):
+        created_at = datetime.now()
         for transaction in [self.base] + list(self.sub_transactions.values()):
+            transaction.created_at = created_at
             transaction.save()

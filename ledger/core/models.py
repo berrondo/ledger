@@ -51,7 +51,7 @@ class Transaction:
     def calculate_amount(self, amnt):
         try:
             self.amount = self.amount(amnt)
-        except:
+        except TypeError:
             ...
 
     def save(self):
@@ -64,7 +64,9 @@ class Transaction:
 
 
 class Journal:
-    def __init__(self, name, *transactions: [Transaction]):
+    def __init__(self,
+                 name: str,
+                 *transactions: [Transaction]):
         self.name = name
         self.transactions = transactions
         self.base = list(transactions).pop(0)

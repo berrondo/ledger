@@ -1,4 +1,5 @@
 from decimal import Decimal
+from typing import Union, List, Optional
 
 from django.db import models
 from django.db.models import Sum
@@ -49,10 +50,20 @@ class Transaction:
         self.from_ = from_
         self.to_ = to_
 
-        self.sub = None
+        self.sub_transactions = []
 
-    def __call__(self, transaction: 'Transaction'):
-        self.sub = transaction
+    def __call__(self, *args: Union[
+        int, Decimal,
+        'Transaction', List['Transaction']]):
+
+        for arg in args:
+            if type(arg) == Transaction:
+                print(len(args))
+                self.sub_transactions.append(arg)
+
+            elif type(arg) in (int, Decimal):
+                self.amount = arg
+
         return self
 
     def calculate_amount(self, amnt):
@@ -63,47 +74,21 @@ class Transaction:
         return self.amount
 
     def save(self):
-        t = _Transaction(
+        if not self.created_at:
+            self.created_at = datetime.now()
+
+        _Transaction(
             created_at=self.created_at,
-            amount=Decimal(self.amount),
+            amount=self.amount,
             from_=self.from_,
             to_=self.to_
         ).save()
 
-        if self.sub:
-            self.sub = _Transaction(
-                created_at=self.created_at,
-                amount=self.sub.calculate_amount(self.amount),
-                from_=self.to_,
-                to_=self.sub.to_
-            )
-            self.sub.save()
+        self._save_sub_transactions()
 
-        return t
-
-
-class Journal:
-    def __init__(self, *transactions: [Transaction]):
-        self.transactions = transactions
-        self.base = list(transactions).pop(0)
-        self.name = self.base.name
-        self.sub_transactions = transactions
-
-    def __call__(self, amount):
-        self._process_sub_transactions()
-        self.base.amount = amount
-        return self
-
-    def _process_sub_transactions(self):
+    def _save_sub_transactions(self):
         for transaction in self.sub_transactions:
+            transaction.amount = transaction.calculate_amount(self.amount)
             if not transaction.from_:
-                transaction.from_ = self.base.from_
-            if not transaction.to_:
-                transaction.to_ = self.base.to_
-
-    def save(self):
-        created_at = datetime.now()
-        for transaction in self.transactions:
-            transaction.created_at = created_at
-            transaction.calculate_amount(self.base.amount)
+                transaction.from_ = self.to_
             transaction.save()

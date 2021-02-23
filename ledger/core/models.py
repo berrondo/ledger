@@ -58,7 +58,6 @@ class Transaction:
 
         for arg in args:
             if type(arg) == Transaction:
-                print(len(args))
                 self.sub_transactions.append(arg)
 
             elif type(arg) in (int, Decimal):
@@ -88,6 +87,7 @@ class Transaction:
 
     def _save_sub_transactions(self):
         for transaction in self.sub_transactions:
+            transaction.created_at = self.created_at
             transaction.amount = transaction.calculate_amount(self.amount)
             if not transaction.from_:
                 transaction.from_ = self.to_

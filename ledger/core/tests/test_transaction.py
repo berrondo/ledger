@@ -17,15 +17,14 @@ def test_venda():
     cash_in = conta()
     cash_out = conta()
 
-    # defining Venda contract:
+    # defining the contract:
     Venda = T('Venda',
         from_=cash_in,
         to_=cash_out
     )
 
-    # using Venda contract:
-    v = Venda(100)
-    v.save()
+    # using the contract:
+    Venda(100).save()
 
     transactions = _Transaction.objects.all()
     assert transactions.count() == 1
@@ -41,7 +40,7 @@ def test_venda_com_desconto():
     cash_out = conta()
     conta_desconto = conta()
 
-    # defining Venda contract:
+    # defining the contract:
     VendaComDesconto10 = T('VendaComDesconto10',
         from_=cash_in,
         to_=cash_out)(
@@ -50,9 +49,8 @@ def test_venda_com_desconto():
             to_=conta_desconto)
     )
 
-    # using Venda contract:
-    v = VendaComDesconto10(100)
-    v.save()
+    # using the contract:
+    VendaComDesconto10(100).save()
 
     transactions = _Transaction.objects.all()
     assert transactions.count() == 2
@@ -70,7 +68,7 @@ def test_venda_com_imposto():
     cash_out = conta()
     conta_imposto = conta()
 
-    # defining Venda contract:
+    # defining the contract:
     VendaComImpostoPercentual = T('VendaComImpostoPercentual',
         from_=cash_in,
         to_=cash_out)(
@@ -80,9 +78,8 @@ def test_venda_com_imposto():
             to_=conta_imposto)
     )
 
-    # using Venda contract:
-    v = VendaComImpostoPercentual(100)
-    v.save()
+    # using the contract:
+    VendaComImpostoPercentual(100).save()
 
     transactions = _Transaction.objects.all()
     assert transactions.count() == 2
@@ -103,7 +100,7 @@ def test_venda_com_imposto_com_comissao_com_imposto():
     conta_comissao = conta()
     conta_imposto = conta()
 
-    # defining Venda contract:
+    # defining the contract:
     VendaComImpostoEComissao = T('VendaComImpostoEComissao',
         from_=cash_in,
         to_=cash_out)(
@@ -119,9 +116,8 @@ def test_venda_com_imposto_com_comissao_com_imposto():
             to_=conta_imposto)
     )
 
-    # using Venda contract:
-    v = VendaComImpostoEComissao(100)
-    v.save()
+    # using the contract:
+    VendaComImpostoEComissao(100).save()
 
     transactions = _Transaction.objects.all()
     assert transactions.count() == 4

@@ -16,12 +16,12 @@ class Percentual:
 class Account(models.Model):
     def all_credits(self):
         return _Transaction.objects.filter(
-            credit_to=self
+            to_=self
         ).aggregate(Sum('amount'))['amount__sum'] or Decimal('0.00')
 
     def all_debits(self):
         return _Transaction.objects.filter(
-            debit_from=self
+            from_=self
         ).aggregate(Sum('amount'))['amount__sum'] or Decimal('0.00')
 
     def balance(self):
@@ -31,8 +31,8 @@ class Account(models.Model):
 class _Transaction(models.Model):
     created_at = models.DateTimeField()
     amount = models.DecimalField(decimal_places=2, max_digits=10)
-    debit_from = models.ForeignKey(Account, on_delete=models.PROTECT)
-    credit_to = models.ForeignKey(Account, on_delete=models.PROTECT)
+    from_ = models.ForeignKey(Account, on_delete=models.PROTECT)
+    to_ = models.ForeignKey(Account, on_delete=models.PROTECT)
 
 
 class Transaction:
@@ -40,15 +40,15 @@ class Transaction:
                  name: str,
                  created_at=None,
                  amount=None,
-                 debit_from: Account=None,
-                 credit_to: Account=None,
+                 from_: Account=None,
+                 to_: Account=None,
                  sub: 'Transaction'=None):
 
         self.name = name
         self.created_at = created_at
         self.amount = amount
-        self.debit_from = debit_from
-        self.credit_to = credit_to
+        self.from_ = from_
+        self.to_ = to_
 
         self.sub = sub
 
@@ -63,16 +63,16 @@ class Transaction:
         t = _Transaction(
             created_at=self.created_at,
             amount=Decimal(self.amount),
-            debit_from=self.debit_from,
-            credit_to=self.credit_to
+            from_=self.from_,
+            to_=self.to_
         ).save()
 
         if self.sub:
             self.sub = _Transaction(
                 created_at=self.created_at,
                 amount=self.sub.calculate_amount(self.amount),
-                debit_from=self.credit_to,
-                credit_to=self.sub.credit_to
+                from_=self.to_,
+                to_=self.sub.to_
             ).save()
 
         return t
@@ -94,10 +94,10 @@ class Journal:
 
     def _process_sub_transactions(self):
         for transaction in self.sub_transactions:
-            if not transaction.debit_from:
-                transaction.debit_from = self.base.debit_from
-            if not transaction.credit_to:
-                transaction.credit_to = self.base.credit_to
+            if not transaction.from_:
+                transaction.from_ = self.base.from_
+            if not transaction.to_:
+                transaction.to_ = self.base.to_
 
     def save(self):
         created_at = datetime.now()

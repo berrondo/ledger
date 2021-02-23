@@ -37,30 +37,45 @@ class _Transaction(models.Model):
 
 class Transaction:
     def __init__(self,
-                 name='',
+                 name: str,
                  created_at=None,
                  amount=None,
                  debit_from: Account=None,
-                 credit_to: Account=None):
+                 credit_to: Account=None,
+                 sub: 'Transaction'=None):
+
         self.name = name
         self.created_at = created_at
         self.amount = amount
         self.debit_from = debit_from
         self.credit_to = credit_to
 
+        self.sub = sub
+
     def calculate_amount(self, amnt):
         try:
             self.amount = self.amount(amnt)
         except TypeError:
             ...
+        return self.amount
 
     def save(self):
-        return _Transaction(
+        t = _Transaction(
             created_at=self.created_at,
             amount=Decimal(self.amount),
             debit_from=self.debit_from,
             credit_to=self.credit_to
         ).save()
+
+        if self.sub:
+            self.sub = _Transaction(
+                created_at=self.created_at,
+                amount=self.sub.calculate_amount(self.amount),
+                debit_from=self.credit_to,
+                credit_to=self.sub.credit_to
+            ).save()
+
+        return t
 
 
 class Journal:

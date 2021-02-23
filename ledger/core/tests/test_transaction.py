@@ -1,34 +1,22 @@
 from decimal import Decimal
 
-import pytest
-
-from ledger.core.models import Journal, Transaction, _Transaction, Account, Percentual
+from ledger.core.models import Journal, Transaction as T, _Transaction, Account, Percentual
 
 
-@pytest.fixture
-def conta1():
+def conta():
     return Account.objects.create()
 
 
-@pytest.fixture
-def conta2():
-    return Account.objects.create()
+def test_venda():
+    # accounts:
+    cash_in = conta()
+    cash_out = conta()
 
-
-@pytest.fixture
-def conta3():
-    return Account.objects.create()
-
-
-def test_venda(conta1, conta2):
     # defining Venda contract:
-    Venda = Journal(
-        'Venda',
-        Transaction(
-            name='Venda',
-            debit_from=conta1,
-            credit_to=conta2
-        )
+    Venda = Journal('Venda',
+        T('Venda',
+            debit_from=cash_in,
+            credit_to=cash_out)
     )
 
     # using Venda contract:
@@ -37,26 +25,28 @@ def test_venda(conta1, conta2):
 
     all_transactions = _Transaction.objects.all()
     assert all_transactions.count() == 1
-    assert all_transactions.first().amount == Decimal(100)
+    assert all_transactions[0].amount == Decimal(100)
+
+    assert cash_in.balance() == Decimal(-100)
+    assert cash_out.balance() == Decimal(100)
 
 
-def test_venda_com_desconto(conta1, conta2):
+def test_venda_com_desconto():
+    # accounts:
+    cash_in = conta()
+    cash_out = conta()
+
     # defining Venda contract:
-    VendaCom10DinheirosDeDesconto = Journal(
-        'VendaCom10DinheirosDeDesconto',
-        Transaction(
-            name='Venda',
-            debit_from=conta1,
-            credit_to=conta2
-        ),
-        Transaction(
-            name='DescontoAbsoluto',
-            amount=-10,
-        )
+    VendaComDesconto10 = Journal('VendaComDesconto10',
+        T('Venda',
+            debit_from=cash_in,
+            credit_to=cash_out),
+        T('DescontoAbsoluto',
+            amount=-10,)
     )
 
     # using Venda contract:
-    v = VendaCom10DinheirosDeDesconto(100)
+    v = VendaComDesconto10(100)
     v.save()
 
     all_transactions = _Transaction.objects.all()
@@ -64,28 +54,29 @@ def test_venda_com_desconto(conta1, conta2):
     assert all_transactions[0].amount == Decimal(100)
     assert all_transactions[1].amount == Decimal(-10)
 
-    assert conta2.balance() == Decimal(90)
+    assert cash_in.balance() == Decimal(-90)
+    assert cash_out.balance() == Decimal(90)
 
 
-def test_venda_com_imposto(conta1, conta2, conta3):
+def test_venda_com_imposto():
+    # accounts:
+    cash_in = conta()
+    cash_out = conta()
+    conta_imposto = conta()
+
     # defining Venda contract:
-    VendaCom10PorcentoDeImposto = Journal(
-        'VendaCom10PorcentoDeImposto',
-        Transaction(
-            name='Venda',
-            debit_from=conta1,
-            credit_to=conta2
-        ),
-        Transaction(
-            name='ImpostoPercentual',
+    VendaComImpostoPercentual = Journal('VendaComImpostoPercentual',
+        T('Venda',
+            debit_from=cash_in,
+            credit_to=cash_out),
+        T('ImpostoPercentual',
             amount=Percentual(10),
-            debit_from=conta2,
-            credit_to=conta3
-        )
+            debit_from=cash_out,
+            credit_to=conta_imposto)
     )
 
     # using Venda contract:
-    v = VendaCom10PorcentoDeImposto(100)
+    v = VendaComImpostoPercentual(100)
     v.save()
 
     all_transactions = _Transaction.objects.all()
@@ -93,10 +84,54 @@ def test_venda_com_imposto(conta1, conta2, conta3):
     assert all_transactions[0].amount == Decimal(100)
     assert all_transactions[1].amount == Decimal(10)
 
-    assert all_transactions[1].credit_to == conta3
+    assert all_transactions[1].credit_to == conta_imposto
 
-    assert conta3.balance() == Decimal(10)
-    assert conta2.balance() == Decimal(90)
+    assert cash_in.balance() == Decimal(-100)
+    assert cash_out.balance() == Decimal(90)
+    assert conta_imposto.balance() == Decimal(10)
+
+
+def test_venda_com_imposto_com_comissao_com_imposto():
+    # accounts:
+    cash_in = conta()
+    cash_out = conta()
+    conta_comissao = conta()
+    conta_imposto = conta()
+
+    # defining Venda contract:
+    VendaComImpostoEComissao = Journal(
+        'VendaComImpostoEComissao',
+        T('Venda',
+            debit_from=cash_in,
+            credit_to=cash_out,),
+        T('ComissaoPercentual',
+            amount=Percentual(10),
+            debit_from=cash_out,
+            credit_to=conta_comissao,
+            sub=T('ImpostoPercentual',
+                amount=Percentual(10),
+                credit_to=conta_imposto)),
+        T('ImpostoPercentual',
+            amount=Percentual(10),
+            debit_from=cash_out,
+            credit_to=conta_imposto)
+    )
+
+    # using Venda contract:
+    v = VendaComImpostoEComissao(100)
+    v.save()
+
+    all_transactions = _Transaction.objects.all()
+    assert all_transactions.count() == 4
+    assert all_transactions[0].amount == Decimal(100)
+    assert all_transactions[1].amount == Decimal(10)
+    assert all_transactions[2].amount == Decimal(1)
+    assert all_transactions[3].amount == Decimal(10)
+
+    assert cash_in.balance() == Decimal(-100)
+    assert cash_out.balance() == Decimal(80)  # 81 ??
+    assert conta_comissao.balance() == Decimal(9)
+    assert conta_imposto.balance() == Decimal(11)
 
 
 # some proposals for contract definition:

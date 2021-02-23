@@ -23,9 +23,9 @@ def test_venda():
     v = Venda(100)
     v.save()
 
-    all_transactions = _Transaction.objects.all()
-    assert all_transactions.count() == 1
-    assert all_transactions[0].amount == Decimal(100)
+    transactions = _Transaction.objects.all()
+    assert transactions.count() == 1
+    assert transactions[0].amount == Decimal(100)
 
     assert cash_in.balance() == Decimal(-100)
     assert cash_out.balance() == Decimal(100)
@@ -49,10 +49,10 @@ def test_venda_com_desconto():
     v = VendaComDesconto10(100)
     v.save()
 
-    all_transactions = _Transaction.objects.all()
-    assert all_transactions.count() == 2
-    assert all_transactions[0].amount == Decimal(100)
-    assert all_transactions[1].amount == Decimal(-10)
+    transactions = _Transaction.objects.all()
+    assert transactions.count() == 2
+    assert transactions[0].amount == Decimal(100)
+    assert transactions[1].amount == Decimal(-10)
 
     assert cash_in.balance() == Decimal(-90)
     assert cash_out.balance() == Decimal(90)
@@ -79,12 +79,12 @@ def test_venda_com_imposto():
     v = VendaComImpostoPercentual(100)
     v.save()
 
-    all_transactions = _Transaction.objects.all()
-    assert all_transactions.count() == 2
-    assert all_transactions[0].amount == Decimal(100)
-    assert all_transactions[1].amount == Decimal(10)
+    transactions = _Transaction.objects.all()
+    assert transactions.count() == 2
+    assert transactions[0].amount == Decimal(100)
+    assert transactions[1].amount == Decimal(10)
 
-    assert all_transactions[1].to_ == conta_imposto
+    assert transactions[1].to_ == conta_imposto
 
     assert cash_in.balance() == Decimal(-100)
     assert cash_out.balance() == Decimal(90)
@@ -121,12 +121,12 @@ def test_venda_com_imposto_com_comissao_com_imposto():
     v = VendaComImpostoEComissao(100)
     v.save()
 
-    all_transactions = _Transaction.objects.all()
-    assert all_transactions.count() == 4
-    assert all_transactions[0].amount == Decimal(100)
-    assert all_transactions[1].amount == Decimal(10)
-    assert all_transactions[2].amount == Decimal(1)
-    assert all_transactions[3].amount == Decimal(10)
+    transactions = _Transaction.objects.all()
+    assert transactions.count() == 4
+    assert transactions[0].amount == Decimal(100)
+    assert transactions[1].amount == Decimal(10)
+    assert transactions[2].amount == Decimal(1)
+    assert transactions[3].amount == Decimal(10)
 
     assert cash_in.balance() == Decimal(-100)
     assert cash_out.balance() == Decimal(80)  # 81 ??

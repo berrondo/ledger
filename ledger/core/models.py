@@ -41,8 +41,7 @@ class Transaction:
                  created_at=None,
                  amount=None,
                  from_: Account=None,
-                 to_: Account=None,
-                 sub: 'Transaction'=None):
+                 to_: Account=None):
 
         self.name = name
         self.created_at = created_at
@@ -50,7 +49,11 @@ class Transaction:
         self.from_ = from_
         self.to_ = to_
 
-        self.sub = sub
+        self.sub = None
+
+    def __call__(self, transaction: 'Transaction'):
+        self.sub = transaction
+        return self
 
     def calculate_amount(self, amnt):
         try:
@@ -73,18 +76,17 @@ class Transaction:
                 amount=self.sub.calculate_amount(self.amount),
                 from_=self.to_,
                 to_=self.sub.to_
-            ).save()
+            )
+            self.sub.save()
 
         return t
 
 
 class Journal:
-    def __init__(self,
-                 name: str,
-                 *transactions: [Transaction]):
-        self.name = name
+    def __init__(self, *transactions: [Transaction]):
         self.transactions = transactions
         self.base = list(transactions).pop(0)
+        self.name = self.base.name
         self.sub_transactions = transactions
 
     def __call__(self, amount):

@@ -13,7 +13,7 @@ def test_venda():
     cash_out = conta()
 
     # defining Venda contract:
-    Venda = Journal('Venda',
+    Venda = Journal(
         T('Venda',
             from_=cash_in,
             to_=cash_out)
@@ -35,14 +35,17 @@ def test_venda_com_desconto():
     # accounts:
     cash_in = conta()
     cash_out = conta()
+    conta_desconto = conta()
 
     # defining Venda contract:
-    VendaComDesconto10 = Journal('VendaComDesconto10',
-        T('Venda',
+    VendaComDesconto10 = Journal(
+        T('VendaComDesconto10',
             from_=cash_in,
-            to_=cash_out),
-        T('Desconto',
-            amount=-10,)
+            to_=cash_out)(
+                T('Desconto',
+                amount=10,
+                to_=conta_desconto)
+            )
     )
 
     # using Venda contract:
@@ -52,10 +55,11 @@ def test_venda_com_desconto():
     transactions = _Transaction.objects.all()
     assert transactions.count() == 2
     assert transactions[0].amount == Decimal(100)
-    assert transactions[1].amount == Decimal(-10)
+    assert transactions[1].amount == Decimal(10)
 
-    assert cash_in.balance() == Decimal(-90)
+    assert cash_in.balance() == Decimal(-100)
     assert cash_out.balance() == Decimal(90)
+    assert conta_desconto.balance() == Decimal(10)
 
 
 def test_venda_com_imposto():
@@ -65,14 +69,15 @@ def test_venda_com_imposto():
     conta_imposto = conta()
 
     # defining Venda contract:
-    VendaComImpostoPercentual = Journal('VendaComImpostoPercentual',
-        T('Venda',
+    VendaComImpostoPercentual = Journal(
+        T('VendaComImpostoPercentual',
             from_=cash_in,
-            to_=cash_out),
-        T('ImpostoPercentual',
-            amount=Percentual(10),
-            from_=cash_out,
-            to_=conta_imposto)
+            to_=cash_out)(
+                T('ImpostoPercentual',
+                amount=Percentual(10),
+                from_=cash_out,
+                to_=conta_imposto)
+            )
     )
 
     # using Venda contract:
@@ -100,17 +105,17 @@ def test_venda_com_imposto_com_comissao_com_imposto():
 
     # defining Venda contract:
     VendaComImpostoEComissao = Journal(
-        'VendaComImpostoEComissao',
-        T('Venda',
+        T('VendaComImpostoEComissao',
             from_=cash_in,
             to_=cash_out,),
         T('ComissaoPercentual',
             amount=Percentual(10),
             from_=cash_out,
-            to_=conta_comissao,
-            sub=T('ImpostoPercentual',
+            to_=conta_comissao)(
+                T('ImpostoPercentual',
                 amount=Percentual(10),
-                to_=conta_imposto)),
+                to_=conta_imposto)
+            ),
         T('ImpostoPercentual',
             amount=Percentual(10),
             from_=cash_out,

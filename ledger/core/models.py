@@ -8,10 +8,14 @@ from django.utils.datetime_safe import datetime
 
 class Percentual:
     def __init__(self, percentual):
+        self._percentual = percentual
         self.percentual = percentual / 100
 
     def __call__(self, amount):
         return self.percentual * amount
+
+    def __repr__(self):
+        return f'Percentual({self._percentual})'
 
 
 class Account(models.Model):
@@ -31,7 +35,7 @@ class Account(models.Model):
 
 class Contract(models.Model):
     name = models.CharField(max_length=255)
-    amount = models.DecimalField(decimal_places=2, max_digits=10, null=True)
+    amount = models.CharField(max_length=255, null=True)
     from_ = models.ForeignKey(Account, on_delete=models.PROTECT, null=True)
     to_ = models.ForeignKey(Account, on_delete=models.PROTECT, null=True)
 
@@ -61,17 +65,17 @@ class Transaction:
         self.sub_transactions = []
 
         # contract lookup...
-        if type(amount) != Percentual:
+        if True: #type(amount) != Percentual:
             contract, created = Contract.objects.get_or_create(
                 name=name,
                 defaults=dict(
-                    amount=amount,
+                    amount=str(amount),
                     from_=from_,
                     to_=to_,))
             self.contract = contract
-            self.amount = amount or contract.amount
             self.from_ = from_ or contract.from_
             self.to_ = to_ or contract.to_
+            exec(f"self.amount = amount or {contract.amount}")
         # end contract lookup
 
     def __call__(self, *args: Union[

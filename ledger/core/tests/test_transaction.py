@@ -3,13 +3,11 @@ from decimal import Decimal
 from ledger.core.models import (
     Transaction as T,
     _Transaction,
-    Account,
+    Contract,
     Percentual
 )
 
-
-def conta():
-    return Account.objects.create()
+from .utils import conta
 
 
 def test_venda():
@@ -25,6 +23,8 @@ def test_venda():
 
     # using the contract:
     Venda(100).save()
+
+    assert Contract.objects.all().count() == 1
 
     transactions = _Transaction.objects.all()
     assert transactions.count() == 1

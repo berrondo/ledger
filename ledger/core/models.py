@@ -1,5 +1,5 @@
 from decimal import Decimal
-from typing import Union, List, Optional
+from typing import Union, List
 
 from django.db import models
 from django.db.models import Sum
@@ -29,6 +29,13 @@ class Account(models.Model):
         return self.all_credits() - self.all_debits()
 
 
+class Contract(models.Model):
+    name = models.CharField(max_length=255)
+    amount = models.DecimalField(decimal_places=2, max_digits=10, null=True)
+    from_ = models.ForeignKey(Account, on_delete=models.PROTECT, null=True)
+    to_ = models.ForeignKey(Account, on_delete=models.PROTECT, null=True)
+
+
 class _Transaction(models.Model):
     created_at = models.DateTimeField()
     amount = models.DecimalField(decimal_places=2, max_digits=10)
@@ -40,17 +47,32 @@ class Transaction:
     def __init__(self,
                  name: str,
                  created_at=None,
-                 amount=None,
+                 amount: Union[int, Decimal, Percentual]=None,
                  from_: Account=None,
                  to_: Account=None):
 
         self.name = name
         self.created_at = created_at
+
         self.amount = amount
         self.from_ = from_
         self.to_ = to_
 
         self.sub_transactions = []
+
+        # contract lookup...
+        if type(amount) != Percentual:
+            contract, created = Contract.objects.get_or_create(
+                name=name,
+                defaults=dict(
+                    amount=amount,
+                    from_=from_,
+                    to_=to_,))
+            self.contract = contract
+            self.amount = amount or contract.amount
+            self.from_ = from_ or contract.from_
+            self.to_ = to_ or contract.to_
+        # end contract lookup
 
     def __call__(self, *args: Union[
         int, Decimal,

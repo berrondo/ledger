@@ -54,7 +54,7 @@ class Transaction:
 
     def __call__(self, *args: Union[
         int, Decimal,
-        'Transaction', List['Transaction']]):
+        'Transaction', List['Transaction']]) -> 'Transaction':
 
         for arg in args:
             if type(arg) == Transaction:

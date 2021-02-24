@@ -44,7 +44,7 @@ def test_venda_com_desconto():
     VendaComDesconto10 = T('VendaComDesconto10',
         from_=cash_in,
         to_=cash_out)(
-            T('Desconto',
+        T('Desconto',
             amount=10,
             to_=conta_desconto)
     )
@@ -72,9 +72,8 @@ def test_venda_com_imposto():
     VendaComImpostoPercentual = T('VendaComImpostoPercentual',
         from_=cash_in,
         to_=cash_out)(
-            T('ImpostoPercentual',
+        T('ImpostoPercentual',
             amount=Percentual(10),
-            from_=cash_out,
             to_=conta_imposto)
     )
 
@@ -107,7 +106,7 @@ def test_venda_com_imposto_com_comissao_com_imposto():
         T('ComissaoPercentual',
             amount=Percentual(10),
             to_=conta_comissao)(
-                T('ImpostoPercentual',
+            T('ImpostoPercentual',
                 amount=Percentual(10),
                 to_=conta_imposto)
             ),

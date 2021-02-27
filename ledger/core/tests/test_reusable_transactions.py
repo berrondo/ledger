@@ -2,8 +2,9 @@ from decimal import Decimal
 
 from ledger.core.models import (
     Transaction as T,
-    _Transaction,
-    Contract, Percentual,
+    Ledger,
+    Agreement,
+    Percentual,
 )
 from .utils import conta
 
@@ -16,25 +17,25 @@ def test_transacoes_pre_definidas():
 
     # defining the transactions:
     T('VendaComDesconto10',
-        from_=cash_in,
-        to_=cash_out)
+        d_from=cash_in,
+        c_to=cash_out)
 
     T('Desconto10',
         amount=10,
-        to_=conta_desconto)
+        c_to=conta_desconto)
 
-    # defining the contract combining the transactions:
+    # defining the agreement combining the transactions:
     VendaComDesconto10 =\
     T('VendaComDesconto10')(
         T('Desconto10')
     )
 
-    # using the contract:
+    # using the agreement:
     VendaComDesconto10(100).save()
 
-    assert Contract.objects.all().count() == 2
+    assert Agreement.objects.all().count() == 2
 
-    transactions = _Transaction.objects.all()
+    transactions = Ledger.objects.all()
     assert transactions.count() == 2
     assert transactions[0].amount == Decimal(100)
     assert transactions[1].amount == Decimal(10)
@@ -44,7 +45,7 @@ def test_transacoes_pre_definidas():
     assert conta_desconto.balance() == Decimal(10)
 
 
-def test_venda_com_imposto_com_comissao_com_imposto_com_composicao_de_transacoes():
+def test_venda_com_imposc_tocom_comissao_com_imposc_tocom_composicao_de_transacoes():
     # accounts:
     cash_in = conta()
     cash_out = conta()
@@ -53,18 +54,18 @@ def test_venda_com_imposto_com_comissao_com_imposto_com_composicao_de_transacoes
 
     # defining the transactions:
     T('VendaComImpostoEComissao',
-        from_=cash_in,
-        to_=cash_out)
+        d_from=cash_in,
+        c_to=cash_out)
 
     T('ComissaoDe10Porcento',
         amount=Percentual(10),
-        to_=conta_comissao)
+        c_to=conta_comissao)
 
     T('ImpostoDe10Porcento',
         amount=Percentual(10),
-        to_=conta_imposto)
+        c_to=conta_imposto)
 
-    # defining the contract combining the transactions:
+    # defining the agreement combining the transactions:
     VendaComImpostoEComissao =\
     T('VendaComImpostoEComissao')(
         T('ComissaoDe10Porcento')(
@@ -73,12 +74,12 @@ def test_venda_com_imposto_com_comissao_com_imposto_com_composicao_de_transacoes
         T('ImpostoDe10Porcento')
     )
 
-    # using the contract:
+    # using the agreement:
     VendaComImpostoEComissao(100).save()
 
-    assert Contract.objects.all().count() == 3
+    assert Agreement.objects.all().count() == 3
 
-    transactions = _Transaction.objects.all()
+    transactions = Ledger.objects.all()
     assert transactions.count() == 4
     assert transactions[0].amount == Decimal(100)
     assert transactions[1].amount == Decimal(10)
@@ -91,7 +92,7 @@ def test_venda_com_imposto_com_comissao_com_imposto_com_composicao_de_transacoes
     assert conta_imposto.balance() == Decimal(11)
 
 
-def test_venda_com_imposto_com_comissao_com_imposto_com_composicao_de_transacoes_2():
+def test_venda_com_imposc_tocom_comissao_com_imposc_tocom_composicao_de_transacoes_2():
     # accounts:
     cash_in = conta()
     cash_out = conta()
@@ -100,18 +101,18 @@ def test_venda_com_imposto_com_comissao_com_imposto_com_composicao_de_transacoes
 
     # defining the transactions:
     T('VendaComImpostoEComissao',
-      from_=cash_in,
-      to_=cash_out)
+      d_from=cash_in,
+      c_to=cash_out)
 
     T('ComissaoDe10Porcento',
       amount=Percentual(10),
-      to_=conta_comissao)
+      c_to=conta_comissao)
 
     T('ImpostoDe10Porcento',
       amount=Percentual(10),
-      to_=conta_imposto)
+      c_to=conta_imposto)
 
-    # defining the contract combining the transactions different order:
+    # defining the agreement combining the transactions different order:
     VendaComImpostoEComissao2 =\
     T('VendaComImpostoEComissao')(
         T('ImpostoDe10Porcento'),
@@ -120,12 +121,12 @@ def test_venda_com_imposto_com_comissao_com_imposto_com_composicao_de_transacoes
         )
     )
 
-    # using the contract:
+    # using the agreement:
     VendaComImpostoEComissao2(100).save()
 
-    assert Contract.objects.all().count() == 3
+    assert Agreement.objects.all().count() == 3
 
-    transactions = _Transaction.objects.all()
+    transactions = Ledger.objects.all()
     assert transactions.count() == 4
     assert transactions[0].amount == Decimal(100)
     assert transactions[1].amount == Decimal(10)
@@ -138,7 +139,7 @@ def test_venda_com_imposto_com_comissao_com_imposto_com_composicao_de_transacoes
     assert conta_imposto.balance() == Decimal(11)
 
 
-def test_venda_com_imposto_com_comissao_com_imposto_com_composicao_de_transacoes_3():
+def test_venda_com_imposc_tocom_comissao_com_imposc_tocom_composicao_de_transacoes_3():
     # accounts:
     cash_in = conta()
     cash_out = conta()
@@ -147,18 +148,18 @@ def test_venda_com_imposto_com_comissao_com_imposto_com_composicao_de_transacoes
 
     # defining the transactions:
     T('VendaComImpostoEComissao',
-      from_=cash_in,
-      to_=cash_out)
+      d_from=cash_in,
+      c_to=cash_out)
 
     T('ComissaoDe10Porcento',
       amount=Percentual(10),
-      to_=conta_comissao)
+      c_to=conta_comissao)
 
     T('ImpostoDe10Porcento',
       amount=Percentual(10),
-      to_=conta_imposto)
+      c_to=conta_imposto)
 
-    # defining the contract combining the transactions different order:
+    # defining the agreement combining the transactions different order:
     VendaComImpostoEComissao2 =\
     T('VendaComImpostoEComissao')(
         T('ImpostoDe10Porcento')(
@@ -168,12 +169,12 @@ def test_venda_com_imposto_com_comissao_com_imposto_com_composicao_de_transacoes
         )
     )
 
-    # using the contract:
+    # using the agreement:
     VendaComImpostoEComissao2(100).save()
 
-    assert Contract.objects.all().count() == 3
+    assert Agreement.objects.all().count() == 3
 
-    transactions = _Transaction.objects.all()
+    transactions = Ledger.objects.all()
     assert transactions.count() == 4
     assert transactions[0].amount == Decimal(100)
     assert transactions[1].amount == Decimal(10)

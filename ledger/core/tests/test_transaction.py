@@ -4,8 +4,8 @@ from ledger.core.models import (
     Transaction as T,
     Ledger,
     Agreement,
-    Percentual,
 )
+from ..calculations import Percentual
 
 from .utils import conta
 

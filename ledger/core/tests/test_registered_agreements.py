@@ -1,8 +1,8 @@
 from ledger.core.models import (
     Transaction as T,
     Agreement,
-    Percentual,
 )
+from ..calculations import Percentual
 from ..register import AgreementRegister as R
 
 

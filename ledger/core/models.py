@@ -9,6 +9,8 @@ from ledger.core.calculations import Percentual
 
 
 class Account(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+
     def all_credits(self):
         return Ledger.objects.filter(
             c_to=self

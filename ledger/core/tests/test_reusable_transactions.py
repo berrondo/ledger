@@ -15,7 +15,7 @@ def test_transacoes_pre_definidas():
     cash_out = conta()
     conta_desconto = conta()
 
-    # defining the transactions:
+    # defining the Transaction Agreements:
     T('VendaComDesconto10',
         d_from=cash_in,
         c_to=cash_out)
@@ -24,22 +24,25 @@ def test_transacoes_pre_definidas():
         amount=10,
         c_to=conta_desconto)
 
-    # defining the agreement combining the transactions:
+    # defining new combined Transaction Agreements:
     VendaComDesconto10 =\
     T('VendaComDesconto10')(
         T('Desconto10')
     )
 
+    # checking registered Transaction Agreements:
+    assert Agreement.objects.all().count() == 2
+
     # using the agreement:
     VendaComDesconto10(100).save()
 
-    assert Agreement.objects.all().count() == 2
-
+    # checking transactions in the ledger
     transactions = Ledger.objects.all()
     assert transactions.count() == 2
     assert transactions[0].amount == Decimal(100)
     assert transactions[1].amount == Decimal(10)
 
+    # checking account balances:
     assert cash_in.balance() == Decimal(-100)
     assert cash_out.balance() == Decimal(90)
     assert conta_desconto.balance() == Decimal(10)
@@ -52,7 +55,7 @@ def test_venda_com_imposc_tocom_comissao_com_imposc_tocom_composicao_de_transaco
     conta_comissao = conta()
     conta_imposto = conta()
 
-    # defining the transactions:
+    # defining the Transaction Agreements:
     T('VendaComImpostoEComissao',
         d_from=cash_in,
         c_to=cash_out)
@@ -65,7 +68,7 @@ def test_venda_com_imposc_tocom_comissao_com_imposc_tocom_composicao_de_transaco
         amount=Percentual(10),
         c_to=conta_imposto)
 
-    # defining the agreement combining the transactions:
+    # defining new combined Transaction Agreement:
     VendaComImpostoEComissao =\
     T('VendaComImpostoEComissao')(
         T('ComissaoDe10Porcento')(
@@ -74,11 +77,13 @@ def test_venda_com_imposc_tocom_comissao_com_imposc_tocom_composicao_de_transaco
         T('ImpostoDe10Porcento')
     )
 
+    # checking registered Transaction Agreements:
+    assert Agreement.objects.all().count() == 3
+
     # using the agreement:
     VendaComImpostoEComissao(100).save()
 
-    assert Agreement.objects.all().count() == 3
-
+    # checking transactions in the ledger
     transactions = Ledger.objects.all()
     assert transactions.count() == 4
     assert transactions[0].amount == Decimal(100)
@@ -86,6 +91,7 @@ def test_venda_com_imposc_tocom_comissao_com_imposc_tocom_composicao_de_transaco
     assert transactions[2].amount == Decimal(1)
     assert transactions[3].amount == Decimal(10)
 
+    # checking account balances:
     assert cash_in.balance() == Decimal(-100)
     assert cash_out.balance() == Decimal(80)
     assert conta_comissao.balance() == Decimal(9)
@@ -99,7 +105,7 @@ def test_venda_com_imposc_tocom_comissao_com_imposc_tocom_composicao_de_transaco
     conta_comissao = conta()
     conta_imposto = conta()
 
-    # defining the transactions:
+    # defining the Transaction Agreements:
     T('VendaComImpostoEComissao',
       d_from=cash_in,
       c_to=cash_out)
@@ -112,7 +118,7 @@ def test_venda_com_imposc_tocom_comissao_com_imposc_tocom_composicao_de_transaco
       amount=Percentual(10),
       c_to=conta_imposto)
 
-    # defining the agreement combining the transactions different order:
+    # defining new combined Transaction Agreement different order:
     VendaComImpostoEComissao2 =\
     T('VendaComImpostoEComissao')(
         T('ImpostoDe10Porcento'),
@@ -121,11 +127,13 @@ def test_venda_com_imposc_tocom_comissao_com_imposc_tocom_composicao_de_transaco
         )
     )
 
-    # using the agreement:
-    VendaComImpostoEComissao2(100).save()
-
+    # checking registered Transaction Agreements:
     assert Agreement.objects.all().count() == 3
 
+    # using the Transaction Agreement:
+    VendaComImpostoEComissao2(100).save()
+
+    # checking transactions in the ledger
     transactions = Ledger.objects.all()
     assert transactions.count() == 4
     assert transactions[0].amount == Decimal(100)
@@ -133,6 +141,7 @@ def test_venda_com_imposc_tocom_comissao_com_imposc_tocom_composicao_de_transaco
     assert transactions[2].amount == Decimal(10)
     assert transactions[3].amount == Decimal(1)
 
+    # checking account balances:
     assert cash_in.balance() == Decimal(-100)
     assert cash_out.balance() == Decimal(80)
     assert conta_comissao.balance() == Decimal(9)
@@ -146,7 +155,7 @@ def test_venda_com_imposc_tocom_comissao_com_imposc_tocom_composicao_de_transaco
     conta_comissao = conta()
     conta_imposto = conta()
 
-    # defining the transactions:
+    # defining the Transaction Agreements:
     T('VendaComImpostoEComissao',
       d_from=cash_in,
       c_to=cash_out)
@@ -159,7 +168,7 @@ def test_venda_com_imposc_tocom_comissao_com_imposc_tocom_composicao_de_transaco
       amount=Percentual(10),
       c_to=conta_imposto)
 
-    # defining the agreement combining the transactions different order:
+    # defining new combined Transaction Agreement another order:
     VendaComImpostoEComissao2 =\
     T('VendaComImpostoEComissao')(
         T('ImpostoDe10Porcento')(
@@ -169,11 +178,13 @@ def test_venda_com_imposc_tocom_comissao_com_imposc_tocom_composicao_de_transaco
         )
     )
 
-    # using the agreement:
-    VendaComImpostoEComissao2(100).save()
-
+    # checking registered Transaction Agreements:
     assert Agreement.objects.all().count() == 3
 
+    # using the Transaction Agreement:
+    VendaComImpostoEComissao2(100).save()
+
+    # checking transactions in the ledger
     transactions = Ledger.objects.all()
     assert transactions.count() == 4
     assert transactions[0].amount == Decimal(100)
@@ -181,6 +192,7 @@ def test_venda_com_imposc_tocom_comissao_com_imposc_tocom_composicao_de_transaco
     assert transactions[2].amount == Decimal(1)
     assert transactions[3].amount == Decimal('0.10')
 
+    # checking account balances:
     assert cash_in.balance() == Decimal(-100)
     assert cash_out.balance() == Decimal(90)
     assert conta_comissao.balance() == Decimal('0.90')

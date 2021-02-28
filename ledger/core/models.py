@@ -11,6 +11,9 @@ from ledger.core.calculations import Percentual
 class Account(models.Model):
     name = models.CharField(max_length=255, unique=True)
 
+    def __str__(self):
+        return self.name
+
     def all_credits(self):
         return Ledger.objects.filter(
             c_to=self
@@ -31,6 +34,8 @@ class Agreement(models.Model):
     d_from = models.ForeignKey(Account, on_delete=models.PROTECT, null=True, related_name='cdebit')
     c_to = models.ForeignKey(Account, on_delete=models.PROTECT, null=True, related_name='ccredit')
 
+    def __str__(self):
+        return f'{self.name}({self.amount}): {self.d_from} -> {self.c_to}'
 
 class Ledger(models.Model):
     created_at = models.DateTimeField()

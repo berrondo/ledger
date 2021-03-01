@@ -18,14 +18,15 @@ def test():
     assert Agreement.objects.all().count() == 2
 
     assert R.VendaComplicada
-    assert type(R.VendaComplicada) == Agreement
-    assert R.VendaComplicada.amount == '100'
+    assert type(R.VendaComplicada) == T
+    assert R.VendaComplicada.amount == 100
 
     assert R.ImpostoInjusto
-    assert type(R.ImpostoInjusto) == Agreement
-    assert R.ImpostoInjusto.amount == 'Percentual(10)'
+    assert type(R.ImpostoInjusto) == T
+    assert R.ImpostoInjusto.amount == Percentual(10)
 
     #using:
-    # R.VendaComplicada()(
-    #     R.ImpostoInjusto()
-    # )
+    VendaComplicada = \
+    R.VendaComplicada(
+        R.ImpostoInjusto
+    )

@@ -37,6 +37,7 @@ class Agreement(models.Model):
     def __str__(self):
         return f'{self.name}({self.amount}): {self.d_from} -> {self.c_to}'
 
+
 class Ledger(models.Model):
     created_at = models.DateTimeField()
     amount = models.DecimalField(decimal_places=2, max_digits=10)

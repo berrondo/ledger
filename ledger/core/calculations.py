@@ -8,3 +8,6 @@ class Percentual:
 
     def __repr__(self):
         return f'Percentual({self._percentual})'
+
+    def __eq__(self, other):
+        return self.percentual == other.percentual

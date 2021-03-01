@@ -1,5 +1,5 @@
 from ledger.core.models import Account
 
 
-def conta():
-    return Account.objects.create()
+def conta(name: str):
+    return Account.objects.create(name=name)

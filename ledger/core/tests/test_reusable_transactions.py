@@ -11,9 +11,9 @@ from .utils import conta
 
 def test_transacoes_pre_definidas():
     # accounts:
-    cash_in = conta()
-    cash_out = conta()
-    conta_desconto = conta()
+    cash_in = conta('cash_in')
+    cash_out = conta('cash_out')
+    conta_desconto = conta('conta_desconto')
 
     # defining the Transaction Agreements:
     T('VendaComDesconto10',
@@ -50,10 +50,10 @@ def test_transacoes_pre_definidas():
 
 def test_venda_com_imposc_tocom_comissao_com_imposc_tocom_composicao_de_transacoes():
     # accounts:
-    cash_in = conta()
-    cash_out = conta()
-    conta_comissao = conta()
-    conta_imposto = conta()
+    cash_in = conta('cash_in')
+    cash_out = conta('cash_out')
+    conta_comissao = conta('conta_comissao')
+    conta_imposto = conta('conta_imposto')
 
     # defining the Transaction Agreements:
     T('VendaComImpostoEComissao',
@@ -100,10 +100,10 @@ def test_venda_com_imposc_tocom_comissao_com_imposc_tocom_composicao_de_transaco
 
 def test_venda_com_imposc_tocom_comissao_com_imposc_tocom_composicao_de_transacoes_2():
     # accounts:
-    cash_in = conta()
-    cash_out = conta()
-    conta_comissao = conta()
-    conta_imposto = conta()
+    cash_in = conta('cash_in')
+    cash_out = conta('cash_out')
+    conta_comissao = conta('conta_comissao')
+    conta_imposto = conta('conta_imposto')
 
     # defining the Transaction Agreements:
     T('VendaComImpostoEComissao',
@@ -150,10 +150,10 @@ def test_venda_com_imposc_tocom_comissao_com_imposc_tocom_composicao_de_transaco
 
 def test_venda_com_imposc_tocom_comissao_com_imposc_tocom_composicao_de_transacoes_3():
     # accounts:
-    cash_in = conta()
-    cash_out = conta()
-    conta_comissao = conta()
-    conta_imposto = conta()
+    cash_in = conta('cash_in')
+    cash_out = conta('cash_out')
+    conta_comissao = conta('conta_comissao')
+    conta_imposto = conta('conta_imposto')
 
     # defining the Transaction Agreements:
     T('VendaComImpostoEComissao',

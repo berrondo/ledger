@@ -12,8 +12,8 @@ from .utils import conta
 
 def test_venda():
     # accounts:
-    cash_in = conta()
-    cash_out = conta()
+    cash_in = conta('cash_in')
+    cash_out = conta('cash_out')
 
     # defining the Transaction Agreement:
     Venda = T('Venda',
@@ -39,9 +39,9 @@ def test_venda():
 
 def test_venda_com_desconto():
     # accounts:
-    cash_in = conta()
-    cash_out = conta()
-    conta_desconto = conta()
+    cash_in = conta('cash_in')
+    cash_out = conta('cash_out')
+    conta_desconto = conta('conta_desconto')
 
     # defining the Transaction Agreement:
     VendaComDesconto10 = T('VendaComDesconto10',
@@ -72,9 +72,9 @@ def test_venda_com_desconto():
 
 def test_venda_com_imposto():
     # accounts:
-    cash_in = conta()
-    cash_out = conta()
-    conta_imposto = conta()
+    cash_in = conta('cash_in')
+    cash_out = conta('cash_out')
+    conta_imposto = conta('conta_imposto')
 
     # defining the Transaction Agreement:
     VendaComImpostoPercentual = T('VendaComImpostoPercentual',
@@ -107,10 +107,10 @@ def test_venda_com_imposto():
 
 def test_venda_com_imposc_tocom_comissao_com_imposto():
     # accounts:
-    cash_in = conta()
-    cash_out = conta()
-    conta_comissao = conta()
-    conta_imposto = conta()
+    cash_in = conta('cash_in')
+    cash_out = conta('cash_out')
+    conta_comissao = conta('conta_comissao')
+    conta_imposto = conta('conta_imposto')
 
     # defining the Transaction Agreement:
     VendaComImpostoEComissao = T('VendaComImpostoEComissao',

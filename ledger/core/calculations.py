@@ -7,7 +7,7 @@ class Percentual:
         return self.percentual * amount
 
     def __repr__(self):
-        return f'Percentual({self._percentual})'
+        return f'{self.__class__.__name__}({self._percentual})'
 
     def __eq__(self, other):
-        return self.percentual == other.percentual
+        return str(self) == str(other)

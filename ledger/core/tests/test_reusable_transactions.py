@@ -3,7 +3,7 @@ from decimal import Decimal
 from ledger.core.models import (
     Transaction as T,
     Ledger,
-    Agreement,
+    Schema,
 )
 from ..calculations import Percentual
 from .utils import conta
@@ -15,7 +15,7 @@ def test_transacoes_pre_definidas():
     cash_out = conta('cash_out')
     conta_desconto = conta('conta_desconto')
 
-    # defining the Transaction Agreements:
+    # defining the Transaction Schemas:
     T('VendaComDesconto10',
         d_from=cash_in,
         c_to=cash_out)
@@ -24,16 +24,16 @@ def test_transacoes_pre_definidas():
         amount=10,
         c_to=conta_desconto)
 
-    # defining new combined Transaction Agreements:
+    # defining new combined Transaction Schemas:
     VendaComDesconto10 =\
     T('VendaComDesconto10')(
         T('Desconto10')
     )
 
-    # checking registered Transaction Agreements:
-    assert Agreement.objects.all().count() == 2
+    # checking registered Transaction Schemas:
+    assert Schema.objects.all().count() == 2
 
-    # using the agreement:
+    # using the schema:
     VendaComDesconto10(100).save()
 
     # checking transactions in the ledger
@@ -55,7 +55,7 @@ def test_venda_com_imposc_tocom_comissao_com_imposc_tocom_composicao_de_transaco
     conta_comissao = conta('conta_comissao')
     conta_imposto = conta('conta_imposto')
 
-    # defining the Transaction Agreements:
+    # defining the Transaction Schemas:
     T('VendaComImpostoEComissao',
         d_from=cash_in,
         c_to=cash_out)
@@ -68,7 +68,7 @@ def test_venda_com_imposc_tocom_comissao_com_imposc_tocom_composicao_de_transaco
         amount=Percentual(10),
         c_to=conta_imposto)
 
-    # defining new combined Transaction Agreement:
+    # defining new combined Transaction Schema:
     VendaComImpostoEComissao =\
     T('VendaComImpostoEComissao')(
         T('ComissaoDe10Porcento')(
@@ -77,10 +77,10 @@ def test_venda_com_imposc_tocom_comissao_com_imposc_tocom_composicao_de_transaco
         T('ImpostoDe10Porcento')
     )
 
-    # checking registered Transaction Agreements:
-    assert Agreement.objects.all().count() == 3
+    # checking registered Transaction Schemas:
+    assert Schema.objects.all().count() == 3
 
-    # using the agreement:
+    # using the schema:
     VendaComImpostoEComissao(100).save()
 
     # checking transactions in the ledger
@@ -105,7 +105,7 @@ def test_venda_com_imposc_tocom_comissao_com_imposc_tocom_composicao_de_transaco
     conta_comissao = conta('conta_comissao')
     conta_imposto = conta('conta_imposto')
 
-    # defining the Transaction Agreements:
+    # defining the Transaction Schemas:
     T('VendaComImpostoEComissao',
       d_from=cash_in,
       c_to=cash_out)
@@ -118,7 +118,7 @@ def test_venda_com_imposc_tocom_comissao_com_imposc_tocom_composicao_de_transaco
       amount=Percentual(10),
       c_to=conta_imposto)
 
-    # defining new combined Transaction Agreement different order:
+    # defining new combined Transaction Schema different order:
     VendaComImpostoEComissao2 =\
     T('VendaComImpostoEComissao')(
         T('ImpostoDe10Porcento'),
@@ -127,10 +127,10 @@ def test_venda_com_imposc_tocom_comissao_com_imposc_tocom_composicao_de_transaco
         )
     )
 
-    # checking registered Transaction Agreements:
-    assert Agreement.objects.all().count() == 3
+    # checking registered Transaction Schemas:
+    assert Schema.objects.all().count() == 3
 
-    # using the Transaction Agreement:
+    # using the Transaction Schema:
     VendaComImpostoEComissao2(100).save()
 
     # checking transactions in the ledger
@@ -155,7 +155,7 @@ def test_venda_com_imposc_tocom_comissao_com_imposc_tocom_composicao_de_transaco
     conta_comissao = conta('conta_comissao')
     conta_imposto = conta('conta_imposto')
 
-    # defining the Transaction Agreements:
+    # defining the Transaction Schemas:
     T('VendaComImpostoEComissao',
       d_from=cash_in,
       c_to=cash_out)
@@ -168,7 +168,7 @@ def test_venda_com_imposc_tocom_comissao_com_imposc_tocom_composicao_de_transaco
       amount=Percentual(10),
       c_to=conta_imposto)
 
-    # defining new combined Transaction Agreement another order:
+    # defining new combined Transaction Schema another order:
     VendaComImpostoEComissao2 =\
     T('VendaComImpostoEComissao')(
         T('ImpostoDe10Porcento')(
@@ -178,10 +178,10 @@ def test_venda_com_imposc_tocom_comissao_com_imposc_tocom_composicao_de_transaco
         )
     )
 
-    # checking registered Transaction Agreements:
-    assert Agreement.objects.all().count() == 3
+    # checking registered Transaction Schemas:
+    assert Schema.objects.all().count() == 3
 
-    # using the Transaction Agreement:
+    # using the Transaction Schema:
     VendaComImpostoEComissao2(100).save()
 
     # checking transactions in the ledger

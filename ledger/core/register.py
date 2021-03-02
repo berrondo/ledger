@@ -1,20 +1,20 @@
 from ledger.core.models import (
-    Agreement,
+    Schema,
     Transaction,
 )
 from ledger.core.calculations import *
 
 
-class _AgreementRegister:
+class _SchemaRegister:
     def __getattribute__(self, name: str) -> Transaction:
-        agreement = Agreement.objects.get(name=name)
-        agreement_transaction = Transaction(
-            name=agreement.name,
-            d_from=agreement.d_from,
-            c_to=agreement.c_to,
+        schema = Schema.objects.get(name=name)
+        transaction = Transaction(
+            name=schema.name,
+            d_from=schema.d_from,
+            c_to=schema.c_to,
         )
-        exec(f'agreement_transaction.amount = {agreement.amount}')
-        return agreement_transaction
+        exec(f'transaction.amount = {schema.amount}')
+        return transaction
 
 
-AgreementRegister = _AgreementRegister()
+SchemaRegister = _SchemaRegister()

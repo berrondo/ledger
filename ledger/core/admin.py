@@ -1,11 +1,11 @@
 from django.contrib import admin
 from .models import (
     Account,
-    Agreement,
+    Schema,
     Ledger,
 )
 
 
 admin.site.register(Account)
-admin.site.register(Agreement)
+admin.site.register(Schema)
 admin.site.register(Ledger)

@@ -9,6 +9,7 @@ from ledger.core.calculations import Percentual
 
 
 class Account(models.Model):
+    """Assets, Liabilities, Income, Expenses, or Equity"""
     name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
@@ -28,7 +29,7 @@ class Account(models.Model):
         return self.all_credits() - self.all_debits()
 
 
-class Agreement(models.Model):
+class Schema(models.Model):
     name = models.CharField(max_length=255, unique=True)
     amount = models.CharField(max_length=255, null=True)
     d_from = models.ForeignKey(Account, on_delete=models.PROTECT, null=True, related_name='cdebit')
@@ -62,18 +63,18 @@ class Transaction:
 
         self.sub_transactions = []
 
-        # agreement lookup...
-        agreement, created = Agreement.objects.get_or_create(
+        # schema lookup...
+        schema, created = Schema.objects.get_or_create(
             name=name,
             defaults=dict(
                 amount=str(amount),
                 d_from=d_from,
                 c_to=c_to,))
-        self.agreement = agreement
-        self.d_from = d_from or agreement.d_from
-        self.c_to = c_to or agreement.c_to
-        exec(f"self.amount = amount or {agreement.amount}")
-        # end agreement lookup
+        self.schema = schema
+        self.d_from = d_from or schema.d_from
+        self.c_to = c_to or schema.c_to
+        exec(f"self.amount = amount or {schema.amount}")
+        # end schema lookup
 
     def __call__(self, *args: Union[
         int, Decimal,

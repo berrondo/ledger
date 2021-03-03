@@ -5,7 +5,7 @@ from django.db import models
 from django.db.models import Sum
 from django.utils.datetime_safe import datetime
 
-from ledger.core.calculations import Percentual
+from ledger.core.calculations import *
 
 
 class Account(models.Model):
@@ -50,7 +50,7 @@ class Transaction:
     def __init__(self,
                  name: str,
                  created_at=None,
-                 amount: Union[int, Decimal, Percentual]=None,
+                 amount: Union[int, Decimal, Calculation]=None,
                  d_from: Account=None,
                  c_to: Account=None):
 
@@ -89,9 +89,9 @@ class Transaction:
 
         return self
 
-    def calculate_amount(self, amnt):
+    def calculate_amount(self, transaction: 'Transaction'):
         try:
-            self.amount = self.amount(amnt)
+            self.amount = self.amount(transaction)
         except TypeError:
             ...
         return self.amount
@@ -112,7 +112,7 @@ class Transaction:
     def _save_sub_transactions(self):
         for transaction in self.sub_transactions:
             transaction.created_at = self.created_at
-            transaction.amount = transaction.calculate_amount(self.amount)
+            transaction.amount = transaction.calculate_amount(self)
             if not transaction.d_from:
                 transaction.d_from = self.c_to
             transaction.save()

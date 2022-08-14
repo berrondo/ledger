@@ -18,6 +18,8 @@ https://beancount.github.io/docs/ or
 
 https://docs.google.com/document/d/100tGcA4blh6KSXPRGCZpUlyxaRUwFHEvnz_k9DyZFn4/edit
 
+https://www.ledger-cli.org/index.html
+
 the MVP:
 
 https://medium.com/@hnordt/como-pagar-6-de-impostos-dentro-da-lei-a91c23868ec6

@@ -15,6 +15,7 @@ http://mikehillyer.com/articles/managing-hierarchical-data-in-mysql/
 accounting:
 
 https://beancount.github.io/docs/ or 
+
 https://docs.google.com/document/d/100tGcA4blh6KSXPRGCZpUlyxaRUwFHEvnz_k9DyZFn4/edit
 
 the MVP:

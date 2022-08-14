@@ -12,6 +12,11 @@ https://www.ibase.ru/files/articles/programming/dbmstrees/sqltrees.html
 
 http://mikehillyer.com/articles/managing-hierarchical-data-in-mysql/
 
+accounting:
+
+https://beancount.github.io/docs/ or 
+https://docs.google.com/document/d/100tGcA4blh6KSXPRGCZpUlyxaRUwFHEvnz_k9DyZFn4/edit
+
 the MVP:
 
 https://medium.com/@hnordt/como-pagar-6-de-impostos-dentro-da-lei-a91c23868ec6
